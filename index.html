@@ -3,182 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mock Agentic AI - Data Preparation Toolkit</title>
+    <title>Data Preparation Agent (MockLLM)</title>
     <style>
-        :root {
-            --primary-color: #0056b3;
-            --bg-color: #f8f9fa;
-            --text-color: #333;
-            --border-color: #ddd;
-        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f6f8fa;
+            color: #24292f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
-            padding: 0;
+            padding: 40px 20px;
         }
         .container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid #d0d7de;
         }
-        h1 {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
-            margin-top: 0;
+        h1 { 
+            font-size: 26px; 
+            margin-bottom: 8px; 
+            color: #0969da; 
         }
-        /* Tab Styles */
+        .description { 
+            color: #57606a; 
+            font-size: 15px; 
+            margin-bottom: 30px; 
+        }
+        
+        /* Tab Navigation Styling */
         .tab {
-            overflow: hidden;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            display: flex;
+            border-bottom: 1px solid #d0d7de;
+            margin-bottom: 30px;
         }
         .tab button {
             background-color: inherit;
-            float: left;
             border: none;
             outline: none;
             cursor: pointer;
-            padding: 14px 20px;
+            padding: 12px 16px;
             transition: 0.3s;
-            font-size: 16px;
-            font-weight: bold;
-            color: #555;
+            font-size: 15px;
+            font-weight: 600;
+            color: #57606a;
+            flex: 1;
+            border-bottom: 3px solid transparent;
         }
         .tab button:hover {
-            background-color: #e9ecef;
-            color: var(--primary-color);
+            color: #24292f;
+            background-color: #f3f4f6;
+            border-radius: 6px 6px 0 0;
         }
         .tab button.active {
-            background-color: #fff;
-            color: var(--primary-color);
-            border: 1px solid var(--border-color);
-            border-bottom: 3px solid var(--primary-color);
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
+            color: #0969da;
+            border-bottom: 3px solid #0969da;
         }
+
+        /* Tab Content Styling */
         .tabcontent {
             display: none;
-            animation: fadeEffect 0.5s;
+            text-align: left;
+            animation: fadeIn 0.4s;
+            line-height: 1.6;
+            color: #24292f;
         }
-        @keyframes fadeEffect {
-            from {opacity: 0;}
-            to {opacity: 1;}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        /* Elements */
+
+        /* Links and Buttons */
+        a {
+            color: #0969da;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
         .download-btn {
             display: inline-block;
-            background-color: var(--primary-color);
-            color: #fff;
-            padding: 15px 25px;
+            background-color: #2da44e;
+            color: white;
+            padding: 12px 24px;
             text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            margin: 20px 0;
-            transition: background 0.3s;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            margin: 25px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .download-btn:hover {
-            background-color: #004494;
+            background-color: #2c974b;
+            text-decoration: none;
+            color: white;
         }
-        .warning-box {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffc107;
-            padding: 15px;
-            margin-bottom: 20px;
+
+        /* Reference Box / Info Box */
+        .reference-box {
+            background-color: #ddf4ff;
+            border: 1px solid #54aeff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #0969da;
+            margin-top: 20px;
+            text-align: left;
         }
-        pre {
-            background: #f4f4f4;
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-family: "Courier New", Courier, monospace;
+        .reference-box a {
+            font-weight: 600;
+            text-decoration: underline;
         }
-        code {
-            background: #f4f4f4;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: "Courier New", Courier, monospace;
+
+        /* Footnote Styling */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #d0d7de;
+            font-size: 13px;
+            color: #57606a;
+            text-align: left;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Data Preparation Agent (Mock Version)</h1>
+    <h1>Data Preparation Agent (MockLLM)</h1>
 
     <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'Overview')" id="defaultOpen">Overview & Download</button>
-        <button class="tablinks" onclick="openTab(event, 'Installation')">Installation Guideline</button>
-        <button class="tablinks" onclick="openTab(event, 'Prompts')">Mock Prompts & Keywords</button>
+        <button class="tablinks" onclick="openTab(event, 'Overview')" id="defaultOpen">1. Overview</button>
+        <button class="tablinks" onclick="openTab(event, 'Installation')">2. Installation</button>
+        <button class="tablinks" onclick="openTab(event, 'Prompts')">3. Mock Prompts</button>
     </div>
 
     <div id="Overview" class="tabcontent">
-        <h2>Zero-Configuration Sandbox</h2>
-        <p>This page hosts the Mock Version of the Agentic AI Data Preparation Toolkit. It is designed specifically to facilitate peer review, allowing users to test the local data processing tools (parsing, subsetting, batching, and visualization) without requiring a paid OpenAI API key.</p>
-        
-        <p>This mock environment mimics the actual agentic behavior reported in our work. Instead of querying a live Large Language Model, this interface uses keyword recognition to route specific user prompts to the authentic underlying Python tools, providing a precise simulation of the agent's workflow.</p>
-        
-        <a href="REPLACE_THIS_WITH_GITHUB_RELEASE_ZIP_LINK" class="download-btn">Download Mock Toolkit (ZIP, ~950 MB)</a>
-        
-        <h3>Data Management</h3>
-        <p>The <code>mock_data</code> and <code>temp_processing</code> folders tackle all local data management. Input files are read directly from the mock data directories, while all processed files and generated visualizations are dynamically saved to the temporary processing folders so you can inspect the real outputs.</p>
+        <p>This archive contains the Mock Version of the Agentic AI Data Preparation Toolkit. It is designed specifically to facilitate data preparation tasks without requiring a paid Large Language Model (LLM). This mock environment mimics the agentic behavior reported in our work (<a href="https://doi.org/10.21203/rs.3.rs-8872511/v1" target="_blank">https://doi.org/10.21203/rs.3.rs-8872511/v1</a>). Instead of querying a live LLM, this interface uses keyword recognition to route specific user prompts to the authentic underlying Python tools, providing a simulation of the agent's workflow.</p>
+
+        <div style="text-align: center;">
+            <a href="https://github.com/commons-repo/003-data-preparation-agent-mock/releases/download/mock_v1/Data-Preparation-Toolkit-Mock-Agentic-AI.zip" class="download-btn">Download Data Preparation Agent (MockLLM) [ZIP]</a>
+        </div>
+
+        <div class="reference-box">
+            After downloading the ZIP, please click <strong><a href="#" onclick="openTab(event, 'Installation'); return false;">Installation Guidelines</a></strong> to install this mock version, and test drive with <strong><a href="#" onclick="openTab(event, 'Prompts'); return false;">Mock Prompts</a></strong> to simulate the agent's behaviors as reported in the work.
+        </div>
     </div>
 
     <div id="Installation" class="tabcontent">
-        <h2>Installation & Launch</h2>
         <p>This environment is designed to run locally with zero configuration, provided the strictly verified Python environment is present.</p>
 
-        <div class="warning-box">
-            <strong>*** CRITICAL PREREQUISITE ***</strong><br>
-            For strict scientific reproducibility and to prevent library dependency errors, this toolkit is locked to specific micro-releases. You must have one of the following installed:
-            <ul>
-                <li><a href="https://www.python.org/ftp/python/3.12.6/python-3.12.6-amd64.exe">Python 3.12.6 (Windows 64-bit)</a></li>
-                <li><a href="https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe">Python 3.12.10 (Windows 64-bit)</a></li>
-            </ul>
-            <em>Note: The setup script will intentionally block newer (3.13+) or older (3.12.3) versions.</em>
-        </div>
-
-        <h3>Important Python Installation Steps:</h3>
-        <p>When running the Python installer, you MUST do the following for the setup scripts to work:</p>
+        <h3 style="color: #0969da; margin-bottom: 10px;">Step 1: Install a Verified Python Version</h3>
+        <p style="margin-top: 0;">You must have one of the following installed:</p>
+        <ul>
+            <li><a href="https://www.python.org/ftp/python/3.12.6/python-3.12.6-amd64.exe">Python 3.12.6 (Windows 64-bit)</a></li>
+            <li><a href="https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe">Python 3.12.10 (Windows 64-bit)</a></li>
+        </ul>
+        
+        <p><strong>IMPORTANT INSTALLATION STEPS:</strong><br>
+        When the Python installer window opens, you <strong>must</strong> check the following boxes before clicking <em>Install Now</em>:</p>
         <ol>
-            <li>On the very first screen, check the box at the bottom that says: <strong>"Add python.exe to PATH"</strong>.</li>
-            <li>On the final successful installation screen, click the option to: <strong>"Disable path length limit"</strong> (highly recommended for virtual environments).</li>
+            <li>Check <strong>"Use admin privileges when installing py.exe"</strong></li>
+            <li>Check <strong>"Add python.exe to PATH"</strong></li>
         </ol>
 
-        <h3>Running the Toolkit:</h3>
-        <p><strong>Step 1:</strong> Extract the entire downloaded archive to a local folder on your machine.</p>
-        <p><strong>Step 2:</strong> Double-click <code>setup.bat</code>. This will verify your Python installation, create an isolated virtual environment, and install the necessary mathematical and UI libraries.</p>
-        <p><strong>Step 3:</strong> Once setup is complete, double-click <code>run_agent.bat</code>. This will launch the local web interface in your default browser.</p>
+	<div style="background-color: #fff8c5; border-left: 5px solid #d4a72c; padding: 15px 20px; border-radius: 6px; margin: 20px 0; color: #24292f;">
+            <strong style="color: #9a6700;">Warning</strong><br>
+            For strict scientific reproducibility and to prevent library dependency errors, this toolkit is locked to specific python micro-releases. The setup script will intentionally block newer (3.13+) or older (3.12.3) versions. Please make sure you have either one installed from the above.
+        </div>
+
+        <h3 style="color: #0969da; margin-bottom: 10px;">Step 2: Extract the Archive</h3>
+        <p style="margin-top: 0;">Extract the entire downloaded archive (ZIP) to a local folder on your machine.</p>
+
+        <h3 style="color: #0969da; margin-bottom: 10px;">Step 3: Run Setup</h3>
+        <p style="margin-top: 0;">Open the extracted folder, locate, and double-click <code>setup.bat</code>. This will verify your Python installation, create an isolated virtual environment, and install the necessary mathematical and UI libraries.</p>
+
+        <h3 style="color: #0969da; margin-bottom: 10px;">Step 4: Launch the Agent</h3>
+        <p style="margin-top: 0;">Once setup is complete, locate and double-click <code>run_agent.bat</code> within that same folder. A terminal window will open and display a local web address (typically <strong>http://127.0.0.1:7860</strong>). Open this link in your web browser to access the interface.</p>
+
+        <div class="reference-box" style="margin-top: 30px;">
+            After successful installation, test drive with <strong><a href="#" onclick="openTab(event, 'Prompts'); return false;">Mock Prompts</a></strong> to simulate the agent's behaviors as reported in the work.
+        </div>
     </div>
 
-    <div id="Prompts" class="tabcontent">
-        <h2>Mock Prompts & Keyword Triggers</h2>
-        <p>Because this version runs deterministically without a live LLM, it requires specific prompts to trigger the data-processing pipelines. You can copy and paste the following exact prompts into the chat interface to simulate the workflows reported in our manuscript.</p>
+    <div id="Prompts" class="tabcontent">        
+        <p>This deterministic version runs without a live LLM, it uses keyword detection to trigger specific data-preparation pipelines. To test drive the system and experience the agent's behavior exactly as reported in <a href="https://doi.org/10.21203/rs.3.rs-8872511/v1" target="_blank">our work</a>, we highly recommend copy-pasting the 18 example prompts below from start to finish.</p>
+
+        <div style="background-color: #ddf4ff; border-left: 5px solid #54aeff; padding: 12px 20px; border-radius: 6px; margin: 20px 0; font-size: 14px;">
+            <strong>Data Management:</strong> Input files are read directly from the <code>mock_data</code> directory. Processed files and visualizations are dynamically saved to <code>temp_processing</code> and subfolders within <code>mock_data</code>.
+        </div>
+
+        <div style="background-color: #fff8c5; border-left: 5px solid #d4a72c; padding: 12px 20px; border-radius: 6px; margin: 20px 0; font-size: 14px;">
+            <strong>Processing Note:</strong> Prompts involving batch processing, segmentation, and peak extraction (e.g., 2, 3, 7, 8, 12) are data-intensive. Please be patient and wait for the processing to finish (indicated by "..." in the chat).
+        </div>
+
+        <h4 style="color: #24292f; border-bottom: 2px solid #d0d7de; padding-bottom: 8px; margin-top: 30px;">Example Mock Prompts</h4>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 1 (Basic Preview)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Show me the content of this file: mock_data/1-1B.txt</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 2 (Complex Parsing & Formatting)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">In this file: mock_data/1-1B.txt, I do not need the first three rows (metadata). Also, only need the first column and the fourth column. Comma decimal separator should also be corrected. Can you do this and show me the modified file?</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 3 (Batch Processing & Metadata Alteration)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Please extend current operations to batch process other files located here: mock_data/parse_in. Save the processed files to: mock_data/parse_out. Also, I want to rename the first column header as 'time [s]' and the fourth column header as 'Fz [N]' while doing this.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 4 (Data Visualization)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Great! Please create a plot for this file: mock_data/1-1B_parsed.txt</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 5 (Segmentation Guidance)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">I need to segment this file into multiple parts. What are the ways?</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 6 (Threshold Segmentation Parameters)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">I think "segmentation by threshold" will help. What information do I need to provide?</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 7 (Execute Threshold Segmentation)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Segment using Threshold = 10, Search Window = 6000, Start and End Padding both are zero (0). X-axis column is the first one (time [s]). Data column is the second one (Fz [N]).</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 8 (Batch Threshold Segmentation)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Great! Can we extend this segmentation process for batch-processing the other files present in the folder: mock_data/segment_in? The output location would be: mock_data/segment_out.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 9 (Show Segment Content)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Show me the contents of the files for segment 1 and segment 40.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 10 (Visualize Segments)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">I need to see the plots of these files as well. Create plots for segment 1 and segment 40. The first column (time [s]) as X-axis and the second one (Fz [N]) as Y-axis.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 11 (Peak Extraction Guidance)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">From the plots, I see there are certain peaks in each. I need to perform such peak extraction. Any way?</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 12 (Peak Extraction Execution)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Thanks! For trial, let's perform peak extraction on this file: segment 1. Settings are: maxima, X Column: "time [s]", Y Column: "Fz [N]", prominence: 5, height: 10, and distance: 50.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 13 (Batch Peak Extraction)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Great! Can we extend this peak extraction for batch-processing the files I have here: mock_data/peak_in? I want the output files saved in this folder: mock_data/peak_out. Settings are: maxima, X Column: "time [s]", Y Column: "Fz [N]", prominence: 5, height: 10, and distance: 50.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 14 (Show Peak File Content)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Show me the contents of this file: mock_data/1-1B_parsed_segment_1_peaks.txt.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 15 (File Modification Guidance)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">I see I need to delete some columns, add a new column, and add some metadata on top. Can we do that?</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 16 (File Modification Execution)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Modify the file: mock_data/1-1B_parsed_segment_1_peaks.txt. Columns to delete: 1st, 2nd, and 4th. Add a new column with header 'i'. Start with 1, with Step increase '1'. This 'i' column should be the first column. Metadata: Process: Micro Drilling, Tool: Solid Carbide micro-INOX 8×D drill, Workpiece: Titanium Block (Ti6Al4V), Cycle: 1.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 17 (Batch File Modification Guidance)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Is there any way to extend this batch modification to all the files in the folder: mock_data/modify_in? I need to delete some columns and add metadata.</pre>
+
+        <p style="margin-bottom: 5px;"><strong>Mock Prompt 18 (Batch File Modification Execution)</strong></p>
+        <pre style="background: #f4f4f4; padding: 12px; border-radius: 6px; border: 1px solid #d0d7de; font-family: monospace; white-space: pre-wrap; margin-top: 0;">Perform batch modification for all files in mock_data/modify_in. Columns to delete: 1st, 2nd, and 4th. Add a new column with header 'i'. Start with 1, with Step increase '1'. This 'i' column should be the first column. Metadata: Process: Micro Drilling, Tool: Solid Carbide micro-INOX 8×D drill, Workpiece: Titanium Block (Ti6Al4V), Cycle: 1. Save all modified files in mock_data/modify_out.</pre>
+
         
-        <p><em>Note: While slight variations in prompts are acceptable as long as the core keywords are maintained, using the exact provided prompts is recommended for the optimal simulation experience.</em></p>
+        <h4 style="color: #24292f; border-bottom: 2px solid #d0d7de; padding-bottom: 8px; margin-top: 50px;">Technical Reference: Keyword Routing Details</h4>
+        <p style="font-size: 14px; color: #57606a;">For debugging or prompt variation, these are the exact keyword rules the system uses to route requests.</p>
+        
+        <ul style="font-size: 13px; color: #57606a; background: #f6f8fa; padding: 20px 40px; border-radius: 6px; border: 1px solid #d0d7de; line-height: 1.8;">
+            <li><strong>Mock Prompt 1:</strong> "show me the content" AND NOT "segment"</li>
+            <li><strong>Mock Prompt 2:</strong> "first three rows" AND "fourth column"</li>
+            <li><strong>Mock Prompt 3:</strong> "batch process"</li>
+            <li><strong>Mock Prompt 4:</strong> "create a plot" AND NOT "segment"</li>
+            <li><strong>Mock Prompt 5:</strong> "segment" AND ("ways" OR "methods" OR "how") AND NO numbers</li>
+            <li><strong>Mock Prompt 6:</strong> "segment" AND "threshold" AND ("what information" OR "what parameters" OR "what do I need" OR "what do you need") AND NO numbers</li>
+            <li><strong>Mock Prompt 7:</strong> "segment" AND "threshold" AND "="</li>
+            <li><strong>Mock Prompt 8:</strong> "batch" AND "segment"</li>
+            <li><strong>Mock Prompt 9:</strong> "show" AND "content" AND "segment" AND numbers AND NOT "peak"</li>
+            <li><strong>Mock Prompt 10:</strong> ("plot" OR "visualize") AND "segment" AND numbers</li>
+            <li><strong>Mock Prompt 11:</strong> "peak" AND ("extract" OR "extraction" OR "detect" OR "detection" OR "find") AND NO numbers</li>
+            <li><strong>Mock Prompt 12:</strong> "peak" AND ("perform" OR "extract" OR "extraction" OR "execute" OR "detection" OR "find") AND numbers AND NOT "batch"</li>
+            <li><strong>Mock Prompt 13:</strong> "batch" AND "peak"</li>
+            <li><strong>Mock Prompt 14:</strong> "show" AND "content" AND "peak"</li>
+            <li><strong>Mock Prompt 15:</strong> ("delete" OR "add" OR "modify") AND ("column" OR "columns") AND ("how" OR "way" OR "ways" OR "method" OR "methods" OR "what" OR "can we" OR "can I") AND NOT ("threshold" OR "maxima" OR "minima" OR "width" OR "distance" OR "prominence" OR "height")</li>
+            <li><strong>Mock Prompt 16:</strong> ("delete" OR "add" OR "modify") AND ("column" OR "columns") AND actual parameters provided AND NOT ("threshold" OR "maxima" OR "minima" OR "width" OR "distance" OR "prominence" OR "height")</li>
+            <li><strong>Mock Prompt 17:</strong> "batch" AND "modification" AND ("delete" OR "add" OR "modify") AND ("how" OR "way" OR "ways" OR "method" OR "methods" OR "what" OR "can we" OR "can I" OR "is there" OR "any way")</li>
+            <li><strong>Mock Prompt 18:</strong> "batch" AND "modification" AND ("delete" OR "add" OR "modify") AND actual parameters provided</li>
+        </ul>
+    </div>
 
-        <h3>Case 1: Basic Preview</h3>
-        <p><strong>Keyword Trigger:</strong> <code>"show me the content"</code></p>
-        <pre>Show me the content of this file: D:\1-1B.txt</pre>
-
-        <h3>Case 2: Complex Parsing & Formatting</h3>
-        <p><strong>Keyword Triggers:</strong> <code>"first three rows"</code> AND <code>"fourth column"</code></p>
-        <pre>In this file: D:\1-1B.txt, I do not need the first three rows (metadata). Also, only need the first column and the fourth column. Comma decimal separator should also be corrected. Can you do this and show me the modified file?</pre>
-
-        <h3>Case 3: Batch Processing & Metadata Alteration</h3>
-        <p><strong>Keyword Trigger:</strong> <code>"batch process"</code></p>
-        <pre>Please extend current operations to batch process other files located here: D:\parse_in. Save the processed files to: D:\parse_out. Also, I want to rename the first column header as 'time [s]' and the fourth column header as 'Fz [N]' while doing this.</pre>
-
-        <h3>Case 4: Data Visualization</h3>
-        <p><strong>Keyword Trigger:</strong> <code>"create a plot"</code></p>
-        <pre>Great! Please create a plot for this file: D:\parse_out\1-1B_parsed_20260516-170750-444019.txt</pre>
+    <div class="footer">
+        <strong>Research & Citation:</strong> This MockLLM-enabled data preparation agent accompanies our research work: <br>
+        <em>Systematizing Data Preparation in Smart Manufacturing via Axiomatic Design: A Toolkit Integrating GUI and Agentic AI</em>. For detailed methodologies, comprehensive examples of the full dynamic Agentic system, and experimental setups, please refer to the article: 
+        <a href="https://doi.org/10.21203/rs.3.rs-8872511/v1" target="_blank">DOI: 10.21203/rs.3.rs-8872511/v1</a>
     </div>
 
 </div>
@@ -186,21 +298,36 @@
 <script>
     function openTab(evt, tabName) {
         var i, tabcontent, tablinks;
+        
         // Hide all tab content
         tabcontent = document.getElementsByClassName("tabcontent");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].style.display = "none";
         }
+        
         // Remove 'active' class from all buttons
         tablinks = document.getElementsByClassName("tablinks");
         for (i = 0; i < tablinks.length; i++) {
             tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
+        
         // Show current tab and add active class
         document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
+        
+        // If triggered by a link click rather than a tab click, highlight the correct tab button manually
+        if(evt.currentTarget.tagName === 'A') {
+            var buttons = document.getElementsByClassName("tablinks");
+            for(var j = 0; j < buttons.length; j++) {
+                if(buttons[j].innerText.includes(tabName)) {
+                    buttons[j].className += " active";
+                }
+            }
+        } else {
+            evt.currentTarget.className += " active";
+        }
     }
-    // Click default open tab on load
+
+    // Open the default tab on page load
     document.getElementById("defaultOpen").click();
 </script>
 
